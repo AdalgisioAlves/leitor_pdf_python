@@ -1,7 +1,6 @@
 from asyncio.windows_events import NULL
 from cmath import nan
 import csv
-import imp
 import tabula
 import pandas as pd
 from .constantes import categorias, columns, mysqlDb
@@ -73,3 +72,7 @@ class Script():
             for r in row:
                 salva = MySQLConn(mysqlDb).salvar(sql, r)
                 print(salva)
+
+    def gerar_csv_br(self):
+        sql = "select id,descricao,mes_ref,mes_baixa,tipo_pagamento,valor,categoria  from auditoria.tb_despesas td"
+        

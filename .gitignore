@@ -3,4 +3,4 @@ docs/
 *.xls
 *.pdf
 .vscode/
-src/__pycache_/
+src/__pycache__/
