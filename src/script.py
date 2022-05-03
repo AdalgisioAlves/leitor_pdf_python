@@ -1,4 +1,3 @@
-from asyncio.windows_events import NULL
 from cmath import nan
 import csv
 import tabula
@@ -56,13 +55,14 @@ class Script():
             if str(categoria[0]) == str(valor):
                 self.categoria = valor
 
-    def pdf_to_csv(self, csv_data):
-        f = open(self.nome_file + '.csv', 'w', newline='', encoding='utf-8')
+    def gerar_csv(self, csv_data):
+        f = open(self.nome_file + '.csv', 'w', newline='')
         w = csv.writer(f)
-        w.writerow(','.join(columns))
+        cabacalho = ['id','descricao','mes_ref','mes_baixa','tipo_pagamento','valor','categoria','tipo_custo','categoria_2']
+        w.writerow(cabacalho)
         for i in csv_data:
             w.writerow(i)
-        w.close()
+        f.close()
 
     def salvar_bd(self, row):
         if len(row) > 1:
@@ -73,6 +73,12 @@ class Script():
                 salva = MySQLConn(mysqlDb).salvar(sql, r)
                 print(salva)
 
-    def gerar_csv_br(self):
-        sql = "select id,descricao,mes_ref,mes_baixa,tipo_pagamento,valor,categoria  from auditoria.tb_despesas td"
+    def gerar_csv_bd(self):
+       
+        sql = str("select * from vw_debitos_categorizado")                       
+        debitos = MySQLConn(mysqlDb).select(sql)
+        if debitos != None:
+            self.gerar_csv(debitos)
+        else:
+            print("Banco de dados vazio")
         

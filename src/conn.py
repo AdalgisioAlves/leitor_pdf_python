@@ -32,6 +32,21 @@ class MySQLConn():
             return err
         self.conn.close()
         return 'Registro inserido com sucesso'
+    
+    def select(self,sql):
+        
+        try:
+            self.cursor.execute(sql)
+            rs = self.cursor.fetchall()
+            if rs != None:
+                #self.conn.close()
+                return rs
+            else:
+                return None
+        except mysql.connector.ProgrammingError as err:
+            self.conn.close()
+            return err
+        
         
         
         
