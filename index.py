@@ -4,7 +4,6 @@ import os
 
 ROOT = os.getcwd()
 arquivos = os.listdir(ROOT + '\\docs')
-
     
 for arquivo in arquivos:
     file_path = ROOT + str('\\docs\\'+str(arquivo))

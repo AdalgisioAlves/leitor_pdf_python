@@ -2,8 +2,8 @@ from cmath import nan
 import csv
 import tabula
 import pandas as pd
-from .constantes import categorias, columns, mysqlDb
-from .conn import MySQLConn
+from .confs.conn import MySQLConn
+from .confs.constantes import categorias,mysqlDb, columns
 
 
 class Script():
@@ -28,12 +28,41 @@ class Script():
                 self.get_categoria(row)
                 if self.categoria != 'Receitas':
                     row.append(self.categoria)
-                    if len(row) < 6 and len(csv) > 0:
+                    if len(row) == 2 and row[0] != row[1]:
                         csv[len(csv) - 1][0] = csv[len(csv) - 1][0] + \
                             str(row[0])
                         i = i + 1
-                    elif len(row) > 5:
+                    elif len(row) == 7:
                         csv.append(row)
+                        i = i + 1
+                    elif len(row) == 6:
+                        
+                        row_aux = []
+                        mes_baixa = row[2].split(" ")
+                        row_aux.append(row[0])
+                        row_aux.append(row[1])
+                        row_aux.append(mes_baixa[0])
+                        mes_baixa.pop(0)
+                        row_aux.append(" ".join(mes_baixa))
+                        row_aux.append(row[3])
+                        #row_aux.append('null')
+                        row_aux.append(row[4])
+                        row_aux.append(row[5])
+                        csv.append(row_aux)
+                        i = i + 1
+                    elif len(row) == 5:
+                        #descricao,mes_ref,mes_baixa,tipo_pagamento,nota_fiscal,valor,categoria
+                        row_aux = []
+                        mes_baixa = row[2].split(" ")
+                        row_aux.append(row[0])
+                        row_aux.append(row[1])
+                        row_aux.append(mes_baixa[0])
+                        mes_baixa.pop(0)
+                        row_aux.append(" ".join(mes_baixa))
+                        row_aux.append('null')
+                        row_aux.append(row[3])                        
+                        row_aux.append(row[4])
+                        csv.append(row_aux)
                         i = i + 1
         salva = self.salvar_bd(csv)
         print(salva)
@@ -61,6 +90,7 @@ class Script():
         cabacalho = ['id','descricao','mes_ref','mes_baixa','tipo_pagamento','valor','categoria','tipo_custo','categoria_2']
         w.writerow(cabacalho)
         for i in csv_data:
+            #i[1] = i[1].replace("'"," ")
             w.writerow(i)
         f.close()
 
@@ -73,8 +103,7 @@ class Script():
                 salva = MySQLConn(mysqlDb).salvar(sql, r)
                 print(salva)
 
-    def gerar_csv_bd(self):
-       
+    def gerar_csv_bd(self):       
         sql = str("select * from vw_debitos_categorizado")                       
         debitos = MySQLConn(mysqlDb).select(sql)
         if debitos != None:
